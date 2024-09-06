@@ -1,0 +1,140 @@
+-- Create the database
+CREATE DATABASE it_days;
+USE it_days;
+
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS students;
+DROP TABLE IF EXISTS tribus;
+DROP TABLE IF EXISTS year_levels;
+DROP TABLE IF EXISTS student_tribu;
+DROP TABLE IF EXISTS student_year_level;
+DROP TABLE IF EXISTS attendance;
+DROP TABLE IF EXISTS reports;
+
+-- Create tables
+CREATE TABLE students (
+    student_id INT AUTO_INCREMENT PRIMARY KEY,
+    fname VARCHAR(50) NOT NULL,
+    mname VARCHAR(50),
+    lname VARCHAR(50) NOT NULL,
+    contact_information VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE tribus (
+    tribu_id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE year_levels (
+    year_level_id INT AUTO_INCREMENT PRIMARY KEY,
+    level INT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE student_tribu (
+    student_id INT,
+    tribu_id INT,
+    PRIMARY KEY (student_id, tribu_id),
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (tribu_id) REFERENCES tribus(tribu_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE student_year_level (
+    student_id INT,
+    year_level_id INT,
+    PRIMARY KEY (student_id, year_level_id),
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (year_level_id) REFERENCES year_levels(year_level_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE attendance (
+    attendance_id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT,
+    check_in_time DATETIME,
+    check_out_time DATETIME,
+    is_late BOOLEAN DEFAULT FALSE,
+    is_early BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE reports (
+    report_id INT AUTO_INCREMENT PRIMARY KEY,
+    report_type ENUM('By Student', 'By Tribu', 'By Year Level', 'Combined') NOT NULL,
+    report_data TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample data
+INSERT INTO year_levels (level) VALUES (1), (2), (3), (4);
+
+INSERT INTO tribus (name) VALUES 
+('Tank'), 
+('Fighter'), 
+('Assassin'), 
+('Mage'), 
+('Marksman'), 
+('Support'), 
+('Magic');
+
+INSERT INTO students (fname, mname, lname, contact_information) VALUES
+('John', 'A', 'Doe', '123-456-7890'),
+('Jane', 'B', 'Smith', '123-456-7891'),
+('Alice', 'C', 'Johnson', '123-456-7892'),
+('Bob', 'D', 'Williams', '123-456-7893'),
+('Charlie', 'E', 'Brown', '123-456-7894'),
+('Diana', 'F', 'Jones', '123-456-7895'),
+('Eve', 'G', 'Garcia', '123-456-7896'),
+('Frank', 'H', 'Martinez', '123-456-7897'),
+('Grace', 'I', 'Hernandez', '123-456-7898'),
+('Hank', 'J', 'Wilson', '123-456-7899');
+
+INSERT INTO student_tribu (student_id, tribu_id) VALUES
+(1, 1),  -- John Doe is assigned to Tank
+(2, 2),  -- Jane Smith is assigned to Fighter
+(3, 3),  -- Alice Johnson is assigned to Assassin
+(4, 4),  -- Bob Williams is assigned to Mage
+(5, 5),  -- Charlie Brown is assigned to Marksman
+(6, 6),  -- Diana Jones is assigned to Support
+(7, 7),  -- Eve Garcia is assigned to Magic
+(8, 1),  -- Frank Martinez is assigned to Tank
+(9, 2),  -- Grace Hernandez is assigned to Fighter
+(10, 3); -- Hank Wilson is assigned to Assassin
+
+INSERT INTO student_year_level (student_id, year_level_id) VALUES
+(1, 1),  -- John Doe is in Year Level 1 (Freshman)
+(2, 2),  -- Jane Smith is in Year Level 2 (Sophomore)
+(3, 3),  -- Alice Johnson is in Year Level 3 (Junior)
+(4, 4),  -- Bob Williams is in Year Level 4 (Senior)
+(5, 1),  -- Charlie Brown is in Year Level 1 (Freshman)
+(6, 2),  -- Diana Jones is in Year Level 2 (Sophomore)
+(7, 3),  -- Eve Garcia is in Year Level 3 (Junior)
+(8, 4),  -- Frank Martinez is in Year Level 4 (Senior)
+(9, 1),  -- Grace Hernandez is in Year Level 1 (Freshman)
+(10, 2); -- Hank Wilson is in Year Level 2 (Sophomore)
+
+
+
+
+-- Drop existing tables if they exist
+DROP TABLE IF EXISTS student_tribu_year_level;
+
+-- Create a combined table for student tribu and year level
+	
+-- Insert sample data into the combined table
+INSERT INTO student_tribu_year_level (student_id, tribu_id, year_level_id) VALUES
+(1, 1, 1),  -- John Doe: Tank, Year Level 1
+(2, 2, 2),  -- Jane Smith: Fighter, Year Level 2
+(3, 3, 3),  -- Alice Johnson: Assassin, Year Level 3
+(4, 4, 4),  -- Bob Williams: Mage, Year Level 4
+(5, 5, 1),  -- Charlie Brown: Marksman, Year Level 1
+(6, 6, 2),  -- Diana Jones: Support, Year Level 2
+(7, 7, 3),  -- Eve Garcia: Magic, Year Level 3
+(8, 1, 4),  -- Frank Martinez: Tank, Year Level 4
+(9, 2, 1),  -- Grace Hernandez: Fighter, Year Level 1
+(10, 3, 2); -- Hank Wilson: Assassin, Year Level 2
+
